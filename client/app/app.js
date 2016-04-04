@@ -1,103 +1,42 @@
-/**
- * @ngdoc overview
- * @name mvpHrApp
- * @description
- * Module definition for the mvpHrApp module.
- */
+angular.module('liveRunSheet', [])
 
-(function () {
-	'use strict';
+.config(function ($routeProvider, $httpProvider) {
+  $routeProvider
+    .when('/signin', {
+      templateUrl: 'app/signin.html',
+      controller: 'controller'
+    });
 
-	angular
-		.module('mvpHrApp', [
-			// Add modules below
-			'ngCookies',
-			'ngResource',
-			'ngSanitize',
-			'ngMessages',
-			'ngMaterial',
-			'ui.router',
-			'btford.socket-io',
-			'mvpHrApp.lodash',
-			'mvpHrApp.mainMenu',
-			'mvpHrApp.io',
-			'mvpHrApp.socket',
-			'mvpHrApp.auth',
-			'mvpHrApp.admin',
-			'mvpHrApp.account',
-			'mvpHrApp.main'
-		])
-		.config(appConfig)
-		.run(appRun);
-
-	/* App configuration */
-
-	// add appConfig dependencies to inject
-	appConfig.$inject = ['$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', '$mdThemingProvider', '$mdIconProvider', '$httpProvider'];
-
-	/**
-	 * Application config function
-	 *
-	 * @param $stateProvider
-	 * @param $urlRouterProvider
-	 * @param $locationProvider
-	 */
-	function appConfig($urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider, $mdThemingProvider, $mdIconProvider, $httpProvider) {
-		$urlRouterProvider.otherwise('/');
-		$urlMatcherFactoryProvider.strictMode(false);
-		$locationProvider.html5Mode(true);
-	
-		$httpProvider.interceptors.push('AuthInterceptor');
-
-
-		// set the default palette name
-		var defaultPalette = 'blue';
-		// define a palette to darken the background of components
-		var greyBackgroundMap = $mdThemingProvider.extendPalette(defaultPalette, {'A100': 'fafafa'});
-
-		$mdThemingProvider.definePalette('grey-background', greyBackgroundMap);
-		$mdThemingProvider.setDefaultTheme(defaultPalette);
-
-		// customize the theme
-		$mdThemingProvider
-			.theme(defaultPalette)
-			.primaryPalette(defaultPalette)
-			.accentPalette('pink')
-			.backgroundPalette('grey-background');
-
-		var spritePath = 'bower_components/material-design-icons/sprites/svg-sprite/';
-		$mdIconProvider.iconSet('navigation', spritePath + 'svg-sprite-navigation.svg');
-		$mdIconProvider.iconSet('action', spritePath + 'svg-sprite-action.svg');
-		$mdIconProvider.iconSet('content', spritePath + 'svg-sprite-content.svg');
-		$mdIconProvider.iconSet('toggle', spritePath + 'svg-sprite-toggle.svg');
-		$mdIconProvider.iconSet('alert', spritePath + 'svg-sprite-alert.svg');
-	}
-
-	/* App run bootstrap */
-
-	// add appConfig dependencies to inject
-	appRun.$inject = ['$rootScope', '$location', 'Auth'];
-
-	/**
-	 * Application run function
-	 *
-	 * @param $rootScope
-	 * @param $location
-	 * @param Auth
-	 */
-	function appRun($rootScope, $location, Auth) {
-		// Redirect to login if route requires auth and you're not logged in
-		$rootScope.$on('$stateChangeStart', function (event, next) {
-			if (!next.authenticate) {
-				return;
-			}
-
-			Auth.isLoggedInAsync(function (loggedIn) {
-				if (!loggedIn || next.role && !Auth.hasRole(next.role)) {
-					$location.path('/login');
-				}
-			});
-		});
-	};
-
-})();
+  $httpProvider.interceptors.push('AttachTokens');
+})
+.factory('AttachTokens', function ($window) {
+  // this is an $httpInterceptor
+  // its job is to stop all out going request
+  // then look in local storage and find the user's token
+  // then add it to the header so the server can validate the request
+  var attach = {
+    request: function (object) {
+      var jwt = $window.localStorage.getItem('com.liveRunSheet');
+      if (jwt) {
+        object.headers['x-access-token'] = jwt;
+      }
+      object.headers['Allow-Control-Allow-Origin'] = '*';
+      return object;
+    }
+  };
+  return attach;
+})
+.run(function ($rootScope, $location, Auth) {
+  // here inside the run phase of angular, our services and controllers
+  // have just been registered and our app is ready
+  // however, we want to make sure the user is authorized
+  // we listen for when angular is trying to change routes
+  // when it does change routes, we then look for the token in localstorage
+  // and send that token to the server to see if it is a real user or hasn't expired
+  // if it's not valid, we then redirect back to signin/signup
+  $rootScope.$on('$routeChangeStart', function (evt, next, current) {
+    if (next.$$route && next.$$route.authenticate && !Auth.isAuth()) {
+      $location.path('/signin');
+    }
+  });
+});
