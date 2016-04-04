@@ -1,2 +1,3 @@
-# MVP-HR
-google spreadsheet api and OAuth.
+# mvpHr
+
+mvpHr application. An application for doing awesome things.
