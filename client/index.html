@@ -1,16 +1,25 @@
 <!DOCTYPE html>
-<html ng-app='liveRunSheet'>
-  <head>
-    <meta charset="utf-8" />
-    <title>Live Run-Sheet</title>
-    <link rel="stylesheet" type="text/css" href="styles/style.css" />
-  </head>
-  <body>
-    <h1>Live Run-Sheet</h1>
-    <div ng-view></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recast.ly - Recast Yourself</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+  <script src="lib/jquery/dist/jquery.js"></script>
+  <script src="lib/react/react.js"></script>
+  <script src="lib/underscore/underscore.js"></script>
+  <script src="data/exampleVideoData.js"></script>
+  <script src="lib/react/react-dom.js"></script>
+  <script src="lib/searchgoogle.js"></script>
+  <script src="config/google.js"></script>
 
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-route/angular-route.js"></script>
-    <script src="app/app.js"></script>
-  </body>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/babel" src="components/VideoListEntry.js"></script>
+  <script type="text/babel" src="components/VideoList.js"></script>
+  <script type="text/babel" src="components/App.js"></script>
+</body>
 </html>

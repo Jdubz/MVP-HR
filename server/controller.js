@@ -1,3 +1,5 @@
+var request = require('requests');
+
 module.exports = {
   
   signin: function (req, res, next) {
