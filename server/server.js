@@ -24,7 +24,8 @@ passport.use(new GoogleStrategy({
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
-    request.session.name = profile.name
+    // request.session.name = profile.name
+    console.log(profile);
     done();
 }));
 
@@ -37,7 +38,7 @@ app.get('/auth/google',
 app.get( '/auth/google/callback', 
   passport.authenticate( 'google', { 
       successRedirect: '/',
-      failureRedirect: '/auth/google'
+      failureRedirect: '/'
 }));
 
 app.get('/login', function(req, res, next) {

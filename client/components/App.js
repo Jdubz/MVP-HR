@@ -3,14 +3,14 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      sheet: [],
-      loggedIn: false
+      sheet: []
+      // loggedIn: false
     };
-    $.get('/login').done(function(data) {
-      if (data === 'yes') {
-        this.setState({loggedIn: true})
-      }
-    },this);
+    // $.get('/login').done(function(data) {
+    //   if (data === 'yes') {
+    //     this.setState({loggedIn: true})
+    //   }
+    // },this);
   }
 
   getSheet() {
@@ -20,22 +20,23 @@ class App extends React.Component {
   }
 
   render() {
-    if (this.state.loggedIn) {
+    // if (this.state.loggedIn) {
       return (
         <div>
           <div className="col-md-12">
+            <a href="/auth/google">Log In</a> <br></br>
             <button onClick={this.getSheet.bind(this)}>Update Sheet</button>
             <Table rows={this.state.sheet}/>
           </div>
         </div>
       );
-    } else {
-      return (
-        <div>
-          <a href="/auth/google">Log In</a>
-        </div>
-      );
-    }
+    // } else {
+      // return (
+      //   <div>
+      //     <a href="/auth/google">Log In</a>
+      //   </div>
+      // );
+    // }
   }
 }
 
