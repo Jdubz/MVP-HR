@@ -1,7 +1,9 @@
 {
   "name": "live_runsheet",
   "version": "1.0.0",
-  "authors": ["Josh Wentworth"],
+  "authors": [
+    "Josh Wentworth"
+  ],
   "license": "MIT",
   "ignore": [
     "**/.*",

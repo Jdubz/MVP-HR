@@ -3,33 +3,39 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      sheet: []; 
+      sheet: [],
+      loggedIn: false
     };
-    searchgoogle('fainting goat kittens', (data, context) => {
-      context.setState({sheet: data.items});
-    }, this);
+    $.get('/login').done(function(data) {
+      if (data === 'yes') {
+        this.setState({loggedIn: true})
+      }
+    },this);
   }
 
-  setPlayer(vid) {
-    this.setState({currentVideo: vid});
-  }
-
-  consumeAPI(query) {
-    var query = $('#searchBar').val();
-    var context = this;
-    searchgoogle(query, function(data, context) {
-      context.setState({videoData: data.items});
-    }, context);
+  getSheet() {
+    $.get('/sheet').done(function(data) {
+      this.setState({sheet: data})
+    }.bind(this));
   }
 
   render() {
-    return (
-      <div>
-        <div className="col-md-12">
-          <VideoList videos={this.state.videoData} setPlayer={this.setPlayer.bind(this)}/>
+    if (this.state.loggedIn) {
+      return (
+        <div>
+          <div className="col-md-12">
+            <button onClick={this.getSheet.bind(this)}>Update Sheet</button>
+            <Table rows={this.state.sheet}/>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <a href="/auth/google">Log In</a>
+        </div>
+      );
+    }
   }
 }
 

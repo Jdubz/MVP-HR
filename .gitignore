@@ -2,9 +2,11 @@
 .DS_Store
 
 ## Bower ##
-client/lib/react
-client/lib/jquery
-client/lib/lodash
+client/lib/
+
+## NPM ##
+node_modules/
 
 ## API keys ##
-client/config/google.js
+server/config/google.js
+server/config/LiveRunsheet.js
